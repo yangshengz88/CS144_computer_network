@@ -29,7 +29,7 @@ WrappingInt32 wrap(uint64_t n, WrappingInt32 isn) {
 //! has a different ISN.
 uint64_t unwrap(WrappingInt32 n, WrappingInt32 isn, uint64_t checkpoint) {
     
-    // the datatype of (n - isn) is int32. When int32 was coverted to uint32_t, uint_max + 1 was added implicitly
+    // the datatype of (n - isn) is int32. When int32 and negative and it was coverted to uint32_t, uint_max + 1 was added implicitly
     // see the link for more detail: https://stackoverflow.com/questions/4975340/int-to-unsigned-int-conversion
     uint32_t offset = n - isn;
 
