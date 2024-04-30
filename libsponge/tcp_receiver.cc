@@ -38,7 +38,7 @@ optional<WrappingInt32> TCPReceiver::ackno() const {
         return nullopt;
     }
     
-    // If we are at non-Listen Stage, we need to add 1 (due to SYN) to get the absolute ack number
+    // If we are at non-Listen Stage, we need to add 1 to get the absolute ack number
     uint64_t abAckNum = _reassembler.stream_out().bytes_written() + 1;
         
     // If we are at FIN_RECV, we need to add 1 more (due to FIN), but we  only do this when stream_out().input_ended() is true
