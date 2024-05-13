@@ -8,6 +8,43 @@
 
 #include <functional>
 #include <queue>
+#include <utility>
+
+
+//! \brife The "Timer" implementation, time is  uint32_t in ms
+class Timer{
+  private:
+    uint32_t _time_out = 0;
+    uint32_t _time_count = 0;
+    bool _is_running = false;
+
+  public:
+    Timer() = default;
+    Timer(const uint32_t time_out) : _time_out(time_out){}
+
+    void set_time_out(const uint32_t time_out){_time_out = time_out; }
+    uint32_t get_time_out(){ return _time_out;}
+    bool check_time_out(){
+      return _is_running && _time_count >= _time_out;
+    }
+
+    void stop(){
+      _is_running = false;
+    }
+    void restart(){
+      _is_running = true;
+      _time_count = 0;
+    }
+
+    void tick(const size_t ms_since_last_tick ){
+      if (_is_running){
+        _time_count += ms_since_last_tick;
+      }
+    }
+
+    bool is_running() const {return _is_running; }
+
+};
 
 //! \brief The "sender" part of a TCP implementation.
 
@@ -31,6 +68,26 @@ class TCPSender {
 
     //! the (absolute) sequence number for the next byte to be sent
     uint64_t _next_seqno{0};
+    
+    //! timer for retransmission
+    Timer _timer;
+
+    //! data struture for outstanding segments
+    std::queue<std::pair<uint64_t, TCPSegment> > _outstanding_seg{};
+
+    //! bytes that were sent but not ACKed
+    size_t _bytes_in_flight = 0;
+
+    //! window size
+    uint16_t _window_size = 1;
+
+    //! how many times of consective retransmissions as to the current segment
+    uint32_t _consecutive_retransmissions_count = 0;
+
+    //! syn flag, fin flag
+    bool _set_syn_flag = false;
+    bool _set_fin_flag = false;
+
 
   public:
     //! Initialize a TCPSender
